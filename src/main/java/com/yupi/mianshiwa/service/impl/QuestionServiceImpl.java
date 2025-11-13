@@ -51,9 +51,6 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     @Resource
     private QuestionBankQuestionService questionBankQuestionService;
 
-    @Resource
-    private QuestionService questionService;
-
     /**
      * 校验数据
      *
