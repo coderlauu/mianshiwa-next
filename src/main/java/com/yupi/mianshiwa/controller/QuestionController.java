@@ -1,5 +1,8 @@
 package com.yupi.mianshiwa.controller;
 
+import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yupi.mianshiwa.annotation.AuthCheck;
 import com.yupi.mianshiwa.common.BaseResponse;
@@ -14,8 +17,11 @@ import com.yupi.mianshiwa.model.dto.question.QuestionEditRequest;
 import com.yupi.mianshiwa.model.dto.question.QuestionQueryRequest;
 import com.yupi.mianshiwa.model.dto.question.QuestionUpdateRequest;
 import com.yupi.mianshiwa.model.entity.Question;
+import com.yupi.mianshiwa.model.entity.QuestionBankQuestion;
 import com.yupi.mianshiwa.model.entity.User;
 import com.yupi.mianshiwa.model.vo.QuestionVO;
+import com.yupi.mianshiwa.service.QuestionBankQuestionService;
+import com.yupi.mianshiwa.service.QuestionBankService;
 import com.yupi.mianshiwa.service.QuestionService;
 import com.yupi.mianshiwa.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +30,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 题库接口
@@ -52,6 +61,7 @@ public class QuestionController {
      * @return
      */
     @PostMapping("/add")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Long> addQuestion(@RequestBody QuestionAddRequest questionAddRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(questionAddRequest == null, ErrorCode.PARAMS_ERROR);
         // todo 在此处将实体类和 DTO 进行转换
@@ -78,6 +88,7 @@ public class QuestionController {
      * @return
      */
     @PostMapping("/delete")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> deleteQuestion(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -149,11 +160,9 @@ public class QuestionController {
     @PostMapping("/list/page")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Page<Question>> listQuestionByPage(@RequestBody QuestionQueryRequest questionQueryRequest) {
-        long current = questionQueryRequest.getCurrent();
-        long size = questionQueryRequest.getPageSize();
-        // 查询数据库
-        Page<Question> questionPage = questionService.page(new Page<>(current, size),
-                questionService.getQueryWrapper(questionQueryRequest));
+        ThrowUtils.throwIf(questionQueryRequest == null, ErrorCode.PARAMS_ERROR);
+        // 查询数据库操作
+        Page<Question> questionPage = questionService.listQuestionByPage(questionQueryRequest);
         return ResultUtils.success(questionPage);
     }
 
