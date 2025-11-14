@@ -17,7 +17,7 @@ public interface RedisConstant {
      * @return 拼接好的 Redis Key
      * @description 方法名前面加上default 关键字，使其成为接口的默认方法，不用单独创建实现类即可调用
      */
-    default String getUserSignInRedisKey(int year, long userId) {
+    static String getUserSignInRedisKey(int year, long userId) {
         return String.format("%s:%s:%S", USER_SIGN_IN_REDIS_KEY_PREFIX, year, userId);
     }
 }

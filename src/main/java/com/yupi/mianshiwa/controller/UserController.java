@@ -317,4 +317,28 @@ public class UserController {
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }
+
+
+    /**
+     * 添加用户签到记录
+     *
+     * @param request
+     * @return 当前是否签到成功
+     */
+    @PostMapping("/add/sign_in")
+    public BaseResponse<Boolean> addSignIn(HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+        boolean result = userService.addUserSign(loginUser.getId());
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 获取用户签到信息
+     */
+    @GetMapping("/get/sign_in")
+    public BaseResponse<Object> getUserSignInInfo(Integer year, HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+        List<Integer> userSignInRecord = userService.getUserSignInRecord(loginUser.getId(), year);
+        return ResultUtils.success(userSignInRecord);
+        }
 }

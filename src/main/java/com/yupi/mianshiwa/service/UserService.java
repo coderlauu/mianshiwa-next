@@ -6,6 +6,7 @@ import com.yupi.mianshiwa.model.dto.user.UserQueryRequest;
 import com.yupi.mianshiwa.model.entity.User;
 import com.yupi.mianshiwa.model.vo.LoginUserVO;
 import com.yupi.mianshiwa.model.vo.UserVO;
+
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
@@ -118,4 +119,19 @@ public interface UserService extends IService<User> {
      */
     QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
 
+    /**
+     * 用户签到
+     * @param userId
+     * @return
+     */
+    boolean addUserSign(long userId);
+
+    /**
+     * 获取用户签到记录
+     *
+     * @param userId
+     * @param year
+     * @return
+     */
+    List<Integer> getUserSignInRecord(long userId, Integer year);
 }
